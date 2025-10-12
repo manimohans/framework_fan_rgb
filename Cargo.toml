@@ -1,0 +1,11 @@
+[package]
+name = "fwd_rgb"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+env_logger = "0.11"
+framework_lib = { path = "framework_lib" }
+eframe = "0.27"
+rand = "0.8"
