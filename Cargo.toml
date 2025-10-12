@@ -9,3 +9,7 @@ env_logger = "0.11"
 framework_lib = { path = "framework_lib" }
 eframe = "0.27"
 rand = "0.8"
+
+[[bin]]
+name = "fwdrgb"
+path = "src/bin/gui.rs"

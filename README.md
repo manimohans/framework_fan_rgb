@@ -34,7 +34,7 @@ cargo clean
 cargo build --release
 ```
 
-Both binaries (`fwd_rgb` and the `gui` target) link against `framework_lib`, so a
+Both binaries (`fwd_rgb` and the `fwdrgb` target) link against `framework_lib`, so a
 recent Rust toolchain (1.74+) and the dependencies of the upstream project
 (libusb, hidapi, etc.) are required.
 
@@ -52,7 +52,7 @@ sudo cargo run --release -- \
 ### GUI Usage / Install
 
 ```bash
-sudo cargo run --release --bin gui
+sudo cargo run --release --bin fwdrgb
 ```
 
 - Adjust the eight color pickers, use presets, or randomize the palette.
@@ -66,14 +66,14 @@ sudo cargo run --release --bin gui
 Build once in release mode and place the binary on your `PATH`:
 
 ```bash
-cargo build --release --bin gui
-sudo install -m 0755 target/release/gui /usr/local/bin/framework-fan-rgb
+cargo build --release --bin fwdrgb
+sudo install -m 0755 target/release/fwdrgb /usr/local/bin/fwdrgb
 ```
 
 You can now launch it any time with:
 
 ```bash
-sudo framework-fan-rgb
+sudo fwdrgb
 ```
 
 Adjust the install destination to match your environment (`/usr/local/bin`,
