@@ -4,6 +4,8 @@ Small control utility for the Framework Desktop fan RGB lighting. It bundles a
 command-line interface for scripting and a desktop UI for interactive control,
 both layered on top of the upstream `framework_lib` crate.
 
+![Screenshot of the fwdrgb GUI](assets/fwdrgb.png)
+
 > **Privilege note:** Framework’s EC driver checks SMBIOS data and uses raw I/O.
 > Expect to run both the CLI and GUI with administrative (root/Administrator)
 > privileges unless you have configured the necessary device permissions or
