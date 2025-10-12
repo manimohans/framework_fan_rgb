@@ -13,8 +13,9 @@ both layered on top of the upstream `framework_lib` crate.
 
 - **Shared core** logic for parsing colors and invoking `framework_lib` EC commands.
 - **CLI tool** to set a contiguous range of up to 64 keys with arbitrary colors.
-- **GUI (egui/eframe)** with eight color pickers, presets (rainbow, Framework orange,
-  gradient, random), driver selection, auto‑apply, and a lighting toggle.
+- **GUI (egui/eframe)** with eight color pickers, whimsical presets (Stack Overflow Rainbow,
+  Corporate Compliance Orange, Terminal Green Matrix, etc.), driver selection, auto‑apply, and a
+  lighting toggle.
 - **Driver selection** allowing you to force the EC transport (`portio`, `cros_ec`,
   or Windows HID) when the automatic choice is not ideal.
 

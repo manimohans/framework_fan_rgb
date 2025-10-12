@@ -10,6 +10,21 @@ const RAINBOW_PRESET: [u32; COLOR_COUNT] = [
     0xFF0000, 0xFF7F00, 0xFFFF00, 0x00FF00, 0x0000FF, 0x4B0082, 0x9400D3, 0xFFFFFF,
 ];
 const FRAMEWORK_ORANGE: u32 = 0xF2662B;
+const PRESET_MATRIX_TERMINAL: [u32; COLOR_COUNT] = [
+    0x00FF66, 0x00CC44, 0x009933, 0x006622, 0x00FF99, 0x00CC66, 0x009944, 0x006633,
+];
+const PRESET_BSOD_GLOW: [u32; COLOR_COUNT] = [
+    0x0C0CFF, 0x1A1AFF, 0x2B2BFF, 0x3C3CFF, 0x1A4FFF, 0x2E5FFF, 0x4370FF, 0x5880FF,
+];
+const PRESET_DARK_MODE: [u32; COLOR_COUNT] = [
+    0x050505, 0x0A0A0A, 0x101010, 0x161616, 0x101010, 0x0A0A0A, 0x050505, 0x080808,
+];
+const PRESET_COMPILE_SUCCESS: [u32; COLOR_COUNT] = [
+    0x2ECC71, 0x27AE60, 0x1ABC9C, 0x16A085, 0x2ECC71, 0x27AE60, 0x1ABC9C, 0x16A085,
+];
+const PRESET_COMPILE_ERROR: [u32; COLOR_COUNT] = [
+    0xE74C3C, 0xC0392B, 0xE67E22, 0xD35400, 0xE74C3C, 0xC0392B, 0xE67E22, 0xD35400,
+];
 
 fn color32_from_rgb(color: RgbS) -> egui::Color32 {
     egui::Color32::from_rgb(color.r, color.g, color.b)
@@ -116,6 +131,21 @@ impl FanRgbApp {
         self.colors.iter().copied().map(rgb_from_color32).collect()
     }
 
+    fn apply_palette(&mut self, palette: &[u32]) {
+        for idx in 0..COLOR_COUNT {
+            let value = palette[idx % palette.len()];
+            self.colors[idx] = color32_from_rgb(rgb_from_u32(value));
+        }
+        self.dirty = true;
+        self.lights_enabled = true;
+    }
+
+    fn finish_preset(&mut self) {
+        if self.auto_apply && self.lights_enabled {
+            self.apply();
+        }
+    }
+
     fn apply(&mut self) {
         if !self.lights_enabled {
             match self.turn_off_lights() {
@@ -159,11 +189,7 @@ impl FanRgbApp {
     }
 
     fn reset_rainbow(&mut self) {
-        for (idx, value) in RAINBOW_PRESET.iter().enumerate() {
-            self.colors[idx] = color32_from_rgb(rgb_from_u32(*value));
-        }
-        self.dirty = true;
-        self.lights_enabled = true;
+        self.apply_palette(&RAINBOW_PRESET);
     }
 
     fn randomize_colors(&mut self) {
@@ -229,30 +255,44 @@ Administrator) on Framework systems.",
             .resizable(false)
             .show(ctx, |ui| {
                 ui.heading("Presets");
-                if ui.button("Rainbow").clicked() {
+
+                if ui.button("Stack Overflow Rainbow").clicked() {
                     self.reset_rainbow();
-                    if self.auto_apply && self.lights_enabled {
-                        self.apply();
-                    }
+                    self.finish_preset();
                 }
-                if ui.button("Framework Orange").clicked() {
+                if ui.button("Corporate Compliance Orange").clicked() {
                     self.apply_framework_theme();
-                    if self.auto_apply && self.lights_enabled {
-                        self.apply();
-                    }
+                    self.finish_preset();
                 }
-                if ui.button("Gradient between endpoints").clicked() {
+                if ui.button("Git Blame Gradient").clicked() {
                     self.apply_gradient();
-                    if self.auto_apply {
-                        self.apply();
-                    }
+                    self.finish_preset();
                 }
-                if ui.button("Randomize palette").clicked() {
+                if ui.button("Chaos Monkey Randomizer").clicked() {
                     self.randomize_colors();
-                    if self.auto_apply {
-                        self.apply();
-                    }
+                    self.finish_preset();
                 }
+                if ui.button("Terminal Green Matrix").clicked() {
+                    self.apply_palette(&PRESET_MATRIX_TERMINAL);
+                    self.finish_preset();
+                }
+                if ui.button("Blue Screen of Glow").clicked() {
+                    self.apply_palette(&PRESET_BSOD_GLOW);
+                    self.finish_preset();
+                }
+                if ui.button("Dark Mode, But Make It RGB").clicked() {
+                    self.apply_palette(&PRESET_DARK_MODE);
+                    self.finish_preset();
+                }
+                if ui.button("Ship It (All Green)").clicked() {
+                    self.apply_palette(&PRESET_COMPILE_SUCCESS);
+                    self.finish_preset();
+                }
+                if ui.button("Merge Conflict Fiesta").clicked() {
+                    self.apply_palette(&PRESET_COMPILE_ERROR);
+                    self.finish_preset();
+                }
+
                 ui.separator();
                 ui.checkbox(&mut self.auto_apply, "Auto-apply after changes");
                 if ui
