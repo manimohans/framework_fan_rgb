@@ -239,6 +239,11 @@ impl FanRgbApp {
 
 impl eframe::App for FanRgbApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        if ctx.input(|i| i.viewport().close_requested()) {
+            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+            return;
+        }
+
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             ui.heading("Framework CPU Fan RGB");
             ui.label("Configure up to 8 contiguous zones and apply them directly via the EC.");
