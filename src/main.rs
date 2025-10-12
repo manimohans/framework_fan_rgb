@@ -2,7 +2,7 @@ use clap::{ArgAction, Parser};
 use framework_lib::chromium_ec::commands::RgbS;
 use framework_lib::chromium_ec::{CrosEcDriverType, EcError};
 
-use fwd_rgb::{apply_colors, parse_color};
+use fwd_rgb::{apply_colors, format_ec_error, parse_color};
 
 /// Control the Framework RGB keyboard colors using the EC command directly.
 #[derive(Debug, Parser)]
@@ -70,16 +70,13 @@ fn main() {
     let color_count = colors.len();
 
     if let Err(err) = apply_colors(args.start, colors, args.driver) {
-        match err {
-            EcError::DeviceError(msg) => {
-                eprintln!("ec device error: {msg}");
-                std::process::exit(4);
-            }
-            other => {
-                eprintln!("ec command failed: {other:?}");
-                std::process::exit(5);
-            }
-        }
+        let exit_code = if matches!(&err, EcError::DeviceError(_)) {
+            4
+        } else {
+            5
+        };
+        eprintln!("{}", format_ec_error(&err));
+        std::process::exit(exit_code);
     }
 
     println!(

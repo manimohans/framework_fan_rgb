@@ -65,3 +65,21 @@ pub fn apply_colors(
 pub fn rgb_to_hex_string(color: RgbS) -> String {
     format!("#{:02X}{:02X}{:02X}", color.r, color.g, color.b)
 }
+
+/// Provide a user-friendly explanation for an EC error, including privilege guidance.
+pub fn format_ec_error(err: &EcError) -> String {
+    match err {
+        EcError::DeviceError(message) if message.contains("Not a Framework Laptop") => {
+            "EC access denied: SMBIOS check failed. Run this tool with administrative \
+privileges (sudo/Administrator) on a Framework system so the EC can be reached."
+                .to_string()
+        }
+        EcError::DeviceError(message) => format!("EC device error: {message}"),
+        EcError::Response(status) => {
+            format!("EC responded with status {:?}.", status)
+        }
+        EcError::UnknownResponseCode(code) => {
+            format!("EC returned unknown response code 0x{code:X}.")
+        }
+    }
+}

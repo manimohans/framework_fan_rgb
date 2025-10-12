@@ -3,7 +3,7 @@ use framework_lib::chromium_ec::CrosEcDriverType;
 use framework_lib::chromium_ec::commands::RgbS;
 use rand::Rng;
 
-use fwd_rgb::{apply_colors, rgb_from_u32, rgb_to_hex_string};
+use fwd_rgb::{apply_colors, format_ec_error, rgb_from_u32, rgb_to_hex_string};
 
 const COLOR_COUNT: usize = 8;
 const RAINBOW_PRESET: [u32; COLOR_COUNT] = [
@@ -146,7 +146,7 @@ impl FanRgbApp {
                 );
             }
             Err(err) => {
-                self.set_status(StatusKind::Error, format!("EC update failed: {err:?}"));
+                self.set_status(StatusKind::Error, format_ec_error(&err));
             }
         }
     }
@@ -155,7 +155,7 @@ impl FanRgbApp {
         let off = vec![RgbS { r: 0, g: 0, b: 0 }; COLOR_COUNT];
         apply_colors(self.start_key, off, self.driver.to_option())
             .map(|_| "Fan lighting disabled".to_string())
-            .map_err(|err| format!("EC update failed: {err:?}"))
+            .map_err(|err| format_ec_error(&err))
     }
 
     fn reset_rainbow(&mut self) {
