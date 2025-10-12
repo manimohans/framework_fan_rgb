@@ -216,6 +216,13 @@ impl eframe::App for FanRgbApp {
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             ui.heading("Framework CPU Fan RGB");
             ui.label("Configure up to 8 contiguous zones and apply them directly via the EC.");
+            ui.add(
+                egui::Label::new(
+                    "Note: EC access requires administrative privileges (sudo or \
+Administrator) on Framework systems.",
+                )
+                .wrap(true),
+            );
         });
 
         egui::SidePanel::right("presets_panel")
