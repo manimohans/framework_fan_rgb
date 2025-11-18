@@ -6,24 +6,33 @@ use rand::Rng;
 use fwd_rgb::{apply_colors, format_ec_error, rgb_from_u32, rgb_to_hex_string};
 
 const COLOR_COUNT: usize = 8;
-const RAINBOW_PRESET: [u32; COLOR_COUNT] = [
+const PRESET_SPECTRUM: [u32; COLOR_COUNT] = [
     0xFF0000, 0xFF7F00, 0xFFFF00, 0x00FF00, 0x0000FF, 0x4B0082, 0x9400D3, 0xFFFFFF,
 ];
-const FRAMEWORK_ORANGE: u32 = 0xF2662B;
-const PRESET_MATRIX_TERMINAL: [u32; COLOR_COUNT] = [
+const PRESET_EMBER: u32 = 0xF2662B;
+const PRESET_MATRIX: [u32; COLOR_COUNT] = [
     0x00FF66, 0x00CC44, 0x009933, 0x006622, 0x00FF99, 0x00CC66, 0x009944, 0x006633,
 ];
-const PRESET_BSOD_GLOW: [u32; COLOR_COUNT] = [
+const PRESET_AZURE: [u32; COLOR_COUNT] = [
     0x0C0CFF, 0x1A1AFF, 0x2B2BFF, 0x3C3CFF, 0x1A4FFF, 0x2E5FFF, 0x4370FF, 0x5880FF,
 ];
-const PRESET_DARK_MODE: [u32; COLOR_COUNT] = [
+const PRESET_VOID: [u32; COLOR_COUNT] = [
     0x050505, 0x0A0A0A, 0x101010, 0x161616, 0x101010, 0x0A0A0A, 0x050505, 0x080808,
 ];
-const PRESET_COMPILE_SUCCESS: [u32; COLOR_COUNT] = [
-    0x2ECC71, 0x27AE60, 0x1ABC9C, 0x16A085, 0x2ECC71, 0x27AE60, 0x1ABC9C, 0x16A085,
+const PRESET_NEON_CITY: [u32; COLOR_COUNT] = [
+    0xFF00FF, 0x00FFFF, 0x9400D3, 0xFF0099, 0x00CCFF, 0x8A2BE2, 0xFF1493, 0x00BFFF,
 ];
-const PRESET_COMPILE_ERROR: [u32; COLOR_COUNT] = [
-    0xE74C3C, 0xC0392B, 0xE67E22, 0xD35400, 0xE74C3C, 0xC0392B, 0xE67E22, 0xD35400,
+const PRESET_SOLAR_FLARE: [u32; COLOR_COUNT] = [
+    0xFF4500, 0xFF8C00, 0xFFA500, 0xFFD700, 0xFF6347, 0xFF7F50, 0xFFD700, 0xFFFF00,
+];
+const PRESET_ABYSS: [u32; COLOR_COUNT] = [
+    0x000080, 0x00008B, 0x191970, 0x0000CD, 0x4169E1, 0x0000FF, 0x1E90FF, 0x00BFFF,
+];
+const PRESET_CANOPY: [u32; COLOR_COUNT] = [
+    0x006400, 0x228B22, 0x32CD32, 0x90EE90, 0x008000, 0x6B8E23, 0x556B2F, 0x8FBC8F,
+];
+const PRESET_DREAMSCAPE: [u32; COLOR_COUNT] = [
+    0xFFB6C1, 0xFF69B4, 0xE6E6FA, 0xD8BFD8, 0xDDA0DD, 0xEE82EE, 0xFFC0CB, 0xFFA07A,
 ];
 
 fn color32_from_rgb(color: RgbS) -> egui::Color32 {
@@ -99,7 +108,7 @@ struct FanRgbApp {
 
 impl FanRgbApp {
     fn new() -> Self {
-        let colors = RAINBOW_PRESET
+        let colors = PRESET_SPECTRUM
             .iter()
             .map(|color| color32_from_rgb(rgb_from_u32(*color)))
             .collect::<Vec<_>>()
@@ -188,11 +197,11 @@ impl FanRgbApp {
             .map_err(|err| format_ec_error(&err))
     }
 
-    fn reset_rainbow(&mut self) {
-        self.apply_palette(&RAINBOW_PRESET);
+    fn reset_spectrum(&mut self) {
+        self.apply_palette(&PRESET_SPECTRUM);
     }
 
-    fn randomize_colors(&mut self) {
+    fn apply_entropy(&mut self) {
         let mut rng = rand::thread_rng();
         self.colors = std::array::from_fn(|_| {
             egui::Color32::from_rgb(
@@ -205,7 +214,7 @@ impl FanRgbApp {
         self.lights_enabled = true;
     }
 
-    fn apply_gradient(&mut self) {
+    fn apply_twilight(&mut self) {
         let first = self.colors.first().copied().unwrap_or(egui::Color32::BLACK);
         let last = self.colors.last().copied().unwrap_or(egui::Color32::BLACK);
 
@@ -228,9 +237,9 @@ impl FanRgbApp {
         (a + (b - a) * t).round().clamp(0.0, 255.0) as u8
     }
 
-    fn apply_framework_theme(&mut self) {
+    fn apply_ember(&mut self) {
         for color in &mut self.colors {
-            *color = color32_from_rgb(rgb_from_u32(FRAMEWORK_ORANGE));
+            *color = color32_from_rgb(rgb_from_u32(PRESET_EMBER));
         }
         self.lights_enabled = true;
         self.dirty = true;
@@ -261,40 +270,52 @@ Administrator) on Framework systems.",
             .show(ctx, |ui| {
                 ui.heading("Presets");
 
-                if ui.button("Stack Overflow Rainbow").clicked() {
-                    self.reset_rainbow();
+                if ui.button("Spectrum").clicked() {
+                    self.reset_spectrum();
                     self.finish_preset();
                 }
-                if ui.button("Corporate Compliance Orange").clicked() {
-                    self.apply_framework_theme();
+                if ui.button("Ember").clicked() {
+                    self.apply_ember();
                     self.finish_preset();
                 }
-                if ui.button("Git Blame Gradient").clicked() {
-                    self.apply_gradient();
+                if ui.button("Twilight").clicked() {
+                    self.apply_twilight();
                     self.finish_preset();
                 }
-                if ui.button("Chaos Monkey Randomizer").clicked() {
-                    self.randomize_colors();
+                if ui.button("Entropy").clicked() {
+                    self.apply_entropy();
                     self.finish_preset();
                 }
-                if ui.button("Terminal Green Matrix").clicked() {
-                    self.apply_palette(&PRESET_MATRIX_TERMINAL);
+                if ui.button("Matrix").clicked() {
+                    self.apply_palette(&PRESET_MATRIX);
                     self.finish_preset();
                 }
-                if ui.button("Blue Screen of Glow").clicked() {
-                    self.apply_palette(&PRESET_BSOD_GLOW);
+                if ui.button("Azure").clicked() {
+                    self.apply_palette(&PRESET_AZURE);
                     self.finish_preset();
                 }
-                if ui.button("Dark Mode, But Make It RGB").clicked() {
-                    self.apply_palette(&PRESET_DARK_MODE);
+                if ui.button("Void").clicked() {
+                    self.apply_palette(&PRESET_VOID);
                     self.finish_preset();
                 }
-                if ui.button("Ship It (All Green)").clicked() {
-                    self.apply_palette(&PRESET_COMPILE_SUCCESS);
+                if ui.button("Neon City").clicked() {
+                    self.apply_palette(&PRESET_NEON_CITY);
                     self.finish_preset();
                 }
-                if ui.button("Merge Conflict Fiesta").clicked() {
-                    self.apply_palette(&PRESET_COMPILE_ERROR);
+                if ui.button("Solar Flare").clicked() {
+                    self.apply_palette(&PRESET_SOLAR_FLARE);
+                    self.finish_preset();
+                }
+                if ui.button("Abyss").clicked() {
+                    self.apply_palette(&PRESET_ABYSS);
+                    self.finish_preset();
+                }
+                if ui.button("Canopy").clicked() {
+                    self.apply_palette(&PRESET_CANOPY);
+                    self.finish_preset();
+                }
+                if ui.button("Dreamscape").clicked() {
+                    self.apply_palette(&PRESET_DREAMSCAPE);
                     self.finish_preset();
                 }
 
@@ -382,7 +403,7 @@ Administrator) on Framework systems.",
                 }
 
                 if ui.button("Reset unsaved changes").clicked() {
-                    self.reset_rainbow();
+                    self.reset_spectrum();
                 }
             });
 
